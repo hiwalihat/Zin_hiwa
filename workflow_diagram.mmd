@@ -1,0 +1,39 @@
+%% Stool Microbiome Illumina WGS Analysis Pipeline
+%% Target: Children <5 years (Diarrhea vs Healthy controls)
+
+graph TD
+    A[Cohort Design<br/>Children <5 years<br/>Diarrhea cases vs Healthy controls] --> B[Stool Collection +<br/>Clinical Metadata<br/>age, sex, antibiotics, site, date]
+    B --> C[DNA Extraction]
+    C --> D[Illumina NovaSeq WGS<br/>~5 Gbp/sample<br/>Paired-end FASTQ]
+    
+    D --> E[Quality Control - Linux]
+    E --> F[FastQC<br/>Quality assessment]
+    F --> G[MultiQC<br/>Aggregate QC reports]
+    G --> H[Read Trimming/Filtering<br/>fastp or cutadapt]
+    
+    H --> I[Human Read Removal<br/>bowtie2 or kneaddata<br/>Privacy + Accuracy]
+    
+    I --> J[Taxonomic Profiling - Linux]
+    J --> K[Kraken2<br/>Taxonomic classification<br/>Bacteria only]
+    K --> L[Bracken<br/>Abundance estimation<br/>phylum → class → order<br/>→ family → genus → species]
+    
+    L --> M[Feature Tables Generation<br/>Taxa abundance matrices +<br/>Metadata integration]
+    
+    M --> N[Statistical Analysis - R]
+    N --> O[Normalization<br/>Relative abundance +<br/>optional CLR transformation]
+    O --> P[Diversity Analysis<br/>α-diversity Shannon, Simpson<br/>β-diversity Bray-Curtis, UniFrac]
+    P --> Q[Ordination + Testing<br/>PCoA/NMDS visualization<br/>PERMANOVA significance testing]
+    Q --> R[Differential Abundance<br/>ANCOM-BC analysis<br/>Adjust for age, antibiotic use]
+    
+    R --> S[Visualization & Reporting]
+    S --> T[Generate Plots<br/>Stacked barplots phylum/genus<br/>Heatmaps, ordination plots<br/>Volcano/forest plots species-level]
+    T --> U[Reproducible Report<br/>Quarto or RMarkdown<br/>Final documentation]
+    
+    style A fill:#e1f5ff,stroke:#0288d1,stroke-width:3px
+    style D fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style I fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style K fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style L fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style O fill:#ffe0b2,stroke:#e64a19,stroke-width:2px
+    style R fill:#ffe0b2,stroke:#e64a19,stroke-width:2px
+    style U fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
