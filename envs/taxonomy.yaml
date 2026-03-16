@@ -1,0 +1,10 @@
+name: metagenomics_taxonomy
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - kraken2=2.1.3
+  - bracken=2.9
+  - krakentools=1.2
+  - python>=3.9
