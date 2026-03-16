@@ -1,0 +1,111 @@
+# =============================================================================
+# Metagenomics Pipeline Configuration
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Samples
+# List sample IDs here.  For each sample the pipeline expects two files
+# under the directory specified by `reads_dir`:
+#   {reads_dir}/{sample}_R1.fastq.gz
+#   {reads_dir}/{sample}_R2.fastq.gz
+# ---------------------------------------------------------------------------
+samples:
+  - sample1
+  - sample2
+
+reads_dir: "data/reads"
+
+# ---------------------------------------------------------------------------
+# Reference databases
+# ---------------------------------------------------------------------------
+databases:
+  # Bowtie2 index prefix for host (e.g. human hg38)
+  host_genome: "databases/host/hg38"
+
+  # Kraken2 database directory
+  kraken2_db: "databases/kraken2/standard"
+
+  # Bracken database (built from the Kraken2 DB at a given read length)
+  bracken_db: "databases/kraken2/standard"
+
+  # HUMAnN3 nucleotide and protein databases
+  humann3_nucleotide_db: "databases/humann3/chocophlan"
+  humann3_protein_db: "databases/humann3/uniref"
+
+  # CheckM data root
+  checkm_data: "databases/checkm"
+
+# ---------------------------------------------------------------------------
+# Quality control (fastp)
+# ---------------------------------------------------------------------------
+fastp:
+  min_length: 50
+  qualified_quality_phred: 20
+  cut_front: true
+  cut_tail: true
+  extra_args: ""
+
+# ---------------------------------------------------------------------------
+# Host removal (Bowtie2)
+# ---------------------------------------------------------------------------
+bowtie2:
+  threads: 8
+  extra_args: "--very-sensitive"
+
+# ---------------------------------------------------------------------------
+# Assembly (MEGAHIT)
+# ---------------------------------------------------------------------------
+megahit:
+  threads: 16
+  min_contig_len: 500
+  k_list: "21,29,39,59,79,99,119,141"
+  extra_args: ""
+
+# ---------------------------------------------------------------------------
+# Taxonomic classification (Kraken2)
+# ---------------------------------------------------------------------------
+kraken2:
+  threads: 8
+  confidence: 0.1
+  extra_args: ""
+
+# Bracken re-estimation of relative abundances
+bracken:
+  read_length: 150       # average read length after trimming
+  taxonomic_level: "S"   # S=species, G=genus, F=family …
+  threshold: 10          # minimum reads required
+
+# ---------------------------------------------------------------------------
+# Functional profiling (HUMAnN3)
+# ---------------------------------------------------------------------------
+humann3:
+  threads: 8
+  metaphlan_options: "--index latest"
+  extra_args: ""
+
+# ---------------------------------------------------------------------------
+# Binning (MetaBAT2)
+# ---------------------------------------------------------------------------
+metabat2:
+  threads: 8
+  min_contig_size: 1500
+  extra_args: ""
+
+# ---------------------------------------------------------------------------
+# Bin quality assessment (CheckM)
+# ---------------------------------------------------------------------------
+checkm:
+  threads: 8
+  completeness_threshold: 50.0   # minimum % completeness to keep a bin
+  contamination_threshold: 10.0  # maximum % contamination to keep a bin
+
+# ---------------------------------------------------------------------------
+# Reporting (MultiQC)
+# ---------------------------------------------------------------------------
+multiqc:
+  extra_args: "--force"
+
+# ---------------------------------------------------------------------------
+# Output directory
+# ---------------------------------------------------------------------------
+output_dir: "results"
